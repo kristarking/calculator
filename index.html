@@ -1,36 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Simple Calculator || 100 JavaScript Projects</title>
-        <!-- Styles  -->
-        <link rel="stylesheet" href="style.css" />
-    </head>
-    <body>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kristarking Calculator || 100 JavaScript Projects</title>
+    <!-- Styles  -->
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="calculator-container">
+        <h1>Kristarking Calculator</h1>
         <div id="calculator">
-            <div id="display"></div>
+            <div id="display">
+                <div id="previous-operand"></div>
+                <div id="current-operand"></div>
+            </div>
             <div id="keyboard">
+                <button class="operator" id="clear">C</button>
+                <button class="operator" id="backspace">←</button>
+                <button class="operator" id="percent">%</button>
+                <button class="operator">/</button>
                 <button>7</button>
                 <button>8</button>
                 <button>9</button>
-                <button class="operator">/</button>
+                <button class="operator">*</button>
                 <button>4</button>
                 <button>5</button>
                 <button>6</button>
-                <button class="operator">*</button>
+                <button class="operator">-</button>
                 <button>1</button>
                 <button>2</button>
                 <button>3</button>
-                <button class="operator">-</button>
-                <button>0</button>
-                <button>.</button>
-                <button class="operator">=</button>
                 <button class="operator">+</button>
+                <button id="zero">0</button>
+                <button>.</button>
+                <button class="operator" id="equals">=</button>
             </div>
         </div>
-
-        <!-- Script Includes -->
-        <script src="index.js"></script>
-    </body>
+        <footer>
+            <p>Powered by Kristarking</p>
+        </footer>
+    </div>
+    <!-- Script Includes -->
+    <script src="calculator.js"></script>
+</body>
 </html>

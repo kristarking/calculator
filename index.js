@@ -1,76 +1,131 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const display = document.getElementById("display");
-    const buttons = document.querySelectorAll("button");
-    let currentInput = "";
-    let operator = "";
-    let previousInput = "";
+    const previousOperandElement = document.getElementById("previous-operand");
+    const currentOperandElement = document.getElementById("current-operand");
+    const buttons = document.querySelectorAll("#keyboard button");
+    let currentOperand = "";
+    let previousOperand = "";
+    let operation = undefined;
+    let krystaMode = false;
 
     buttons.forEach((button) => {
-        button.addEventListener("click", handleButtonClick);
+        button.addEventListener("click", () => {
+            handleButtonClick(button.textContent);
+        });
     });
 
-    function handleButtonClick(e) {
-        const buttonValue = e.target.textContent;
-
-        if (!isNaN(buttonValue) || buttonValue === ".") {
-            currentInput += buttonValue;
-        } else if (buttonValue === "C") {
-            clearCalculator();
-        } else if (buttonValue === "=") {
-            performCalculation();
+    function handleButtonClick(value) {
+        if (value === 'C') {
+            clear();
+        } else if (value === '←') {
+            backspace();
+        } else if (value === '%') {
+            percentage();
+        } else if (isOperator(value)) {
+            handleOperator(value);
+        } else if (value === '=') {
+            compute();
         } else {
-            handleOperator(buttonValue);
+            appendNumber(value);
         }
-
         updateDisplay();
     }
 
+    function clear() {
+        currentOperand = "";
+        previousOperand = "";
+        operation = undefined;
+        krystaMode = false;
+    }
+
+    function backspace() {
+        currentOperand = currentOperand.toString().slice(0, -1);
+    }
+
+    function percentage() {
+        currentOperand = (parseFloat(currentOperand) / 100).toString();
+    }
+
+    function appendNumber(number) {
+        if (number === '.' && currentOperand.includes('.')) return;
+        currentOperand = currentOperand.toString() + number.toString();
+    }
+
     function handleOperator(op) {
-        if (operator && currentInput) {
-            performCalculation();
-            previousInput = currentInput;
-            currentInput = "";
+        if (currentOperand === "") return;
+        if (previousOperand !== "") {
+            compute();
+        }
+        operation = op;
+        previousOperand = currentOperand;
+        currentOperand = "";
+    }
+
+    function isOperator(value) {
+        return ['+', '-', '*', '/'].includes(value);
+    }
+
+    function compute() {
+        let computation;
+        const prev = parseFloat(previousOperand);
+        const current = parseFloat(currentOperand);
+        if (isNaN(prev) || isNaN(current)) return;
+        switch (operation) {
+            case '+':
+                computation = prev + current;
+                break;
+            case '-':
+                computation = prev - current;
+                break;
+            case '*':
+                computation = prev * current;
+                break;
+            case '/':
+                if (current === 0) {
+                    alert("Kristarking says: Division by zero is not allowed!");
+                    return;
+                }
+                computation = prev / current;
+                break;
+            default:
+                return;
+        }
+        currentOperand = computation;
+        operation = undefined;
+        previousOperand = "";
+        checkKrystaMode();
+    }
+
+    function checkKrystaMode() {
+        if (currentOperand === '777') {
+            krystaMode = true;
+            alert("Kristarking Mode Activated! 👑");
+        }
+    }
+
+    function getDisplayNumber(number) {
+        const stringNumber = number.toString();
+        const integerDigits = parseFloat(stringNumber.split('.')[0]);
+        const decimalDigits = stringNumber.split('.')[1];
+        let integerDisplay;
+        if (isNaN(integerDigits)) {
+            integerDisplay = "";
         } else {
-            previousInput = currentInput || "0";
-            currentInput = "";
+            integerDisplay = integerDigits.toLocaleString('en', { maximumFractionDigits: 0 });
         }
-
-        operator = op;
-    }
-
-    function performCalculation() {
-        const num1 = parseFloat(previousInput);
-        const num2 = parseFloat(currentInput);
-
-        if (!isNaN(num1) && !isNaN(num2)) {
-            switch (operator) {
-                case "+":
-                    currentInput = (num1 + num2).toString();
-                    break;
-                case "-":
-                    currentInput = (num1 - num2).toString();
-                    break;
-                case "*":
-                    currentInput = (num1 * num2).toString();
-                    break;
-                case "/":
-                    currentInput = (num1 / num2).toString();
-                    break;
-                default:
-                    break;
-            }
+        if (decimalDigits != null) {
+            return `${integerDisplay}.${decimalDigits}`;
+        } else {
+            return integerDisplay;
         }
-
-        operator = "";
-    }
-
-    function clearCalculator() {
-        currentInput = "";
-        operator = "";
-        previousInput = "";
     }
 
     function updateDisplay() {
-        display.textContent = currentInput || "0";
+        currentOperandElement.textContent = krystaMode ? 
+            `👑 ${getDisplayNumber(currentOperand)}` : getDisplayNumber(currentOperand);
+        if (operation != null) {
+            previousOperandElement.textContent = `${getDisplayNumber(previousOperand)} ${operation}`;
+        } else {
+            previousOperandElement.textContent = '';
+        }
     }
 });
